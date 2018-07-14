@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>IronWorks</title>
+
+    <!--css-->
+    <link rel="stylesheet" href="lib/css/joint.min.css" type="text/css">
+    <link rel="stylesheet" href="lib/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="style.css" type="text/css">
+
+    <!--Dipendenze per joint-->
+    <script src="lib/js/jquery-3.3.1.min.js"></script>
+    <script src="lib/js/lodash.js"></script>
+    <script src="lib/js/backbone.js"></script>
+    <script src="lib/js/joint.min.js"></script>
+</head>
+
+<body id="alignHomepage">
+<header>
+    <img src="img/wmach.png" id="logo1" alt="logo">
+    <h1 class="display-1">IronWorks</h1>
+</header>
+
+<main>
+
+    <div id="projectManagingButton">
+        <a class="btn btn-outline-light" href="app.html">New project</a>
+        <input class="btn btn-outline-light" type="button" id="open" value="Open project"/>
+        <input type="file" id="get_file" accept="application/json"/> <!--bottone nascosto per ragioni grafiche-->
+    </div>
+
+    <div class="overlay" id="error-msg">
+        <div id="error-msg-content">
+            <h3>Wrong file</h3>
+            <p id="error-text">You have uploaded a wrong file.</p>
+            <button class="btn btn-outline-secondary" id="error-ok"> OK</button>
+        </div>
+    </div>
+
+    <script src="lib/js/sha512.js"></script>
+    <script src="js/open.js"></script>
+</main>
+
+</body>
+</html>

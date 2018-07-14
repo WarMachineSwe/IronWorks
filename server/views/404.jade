@@ -1,0 +1,36 @@
+﻿doctype html
+
+html
+    head
+        meta(charset='UTF-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        title IronWorks
+        // css
+        link(rel='stylesheet', href='lib/css/joint.min.css', type='text/css')
+        link(rel='stylesheet', href='lib/css/bootstrap.min.css', type='text/css')
+        link(rel='stylesheet', href='style.css', type='text/css')
+        // Dipendenze per joint
+        script(src='lib/js/jquery-3.3.1.min.js')
+        script(src='lib/js/lodash.js')
+        script(src='lib/js/backbone.js')
+        script(src='lib/js/joint.min.js')
+    body
+        header
+            img#logo(src='img/wmach.png', alt='logo')
+            h1.display-4 IronWorks
+        main
+            #middle
+                img#erroreimg(src='img/404.png', alt='immagine errore 404')
+                h1 OUCH...qualcosa è andato storto!
+                p
+                    | La pagina che stai cercando non esiste.
+                    a(href='javascript:history.go(-1)')  Torna indietro
+                    |  o vai alla
+                    span(xml:lang='en')
+                        a(href='index.html') Home
+                    | !
+            script(src='lib/js/download.js')
+            script(src='lib/js/shapes.js')
+            script(src='js/utils.js')
+            script(src='js/ui.js')
+            script(src='js/app.js')
