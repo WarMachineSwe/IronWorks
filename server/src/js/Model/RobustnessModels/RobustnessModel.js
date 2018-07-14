@@ -57,6 +57,7 @@ function Boundary () {
         this.boundary.attr('text/text', 'Boundary')
     } else {
         this.boundary.attr('text/text', name.value)
+        name.value = '';
     }
 
 }
@@ -104,6 +105,7 @@ function Actor () {
         this.actor.attr('text/text', 'Actor')
     } else {
         this.actor.attr('text/text', name.value)
+        name.value = '';
     }
 
 }
@@ -153,6 +155,7 @@ function Entity () {
         this.entity.attr('text/text', 'Entity')
     } else {
         this.entity.attr('text/text', name.value)
+        name.value = '';
     }
 
 
@@ -202,6 +205,7 @@ function Controller () {
         this.controller.attr('text/text', 'Controller')
     } else {
         this.controller.attr('text/text', name.value)
+        name.value = '';
     }
 
 }
