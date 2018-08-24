@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>IronWorks</title>
+
+    <!--css-->
+    <link rel="stylesheet" href="lib/css/joint.min.css" type="text/css">
+    <link rel="stylesheet" href="lib/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+
+<main>
+    <header>
+        <h1 id="title" class="display-10"><a href="/">IronWorks</a></h1>
+        <input class="btn btn-outline-light" type="button" id="open" value="Open project"/>
+        <input type="file" id="get_file" accept="application/json"/> <!-- hidden -->
+        <button class="btn btn-outline-light" id="save">Export project</button>
+        <button class="btn btn-outline-light" id="generate">Generate code</button>
+        <button class="btn btn-outline-light" id="reset">Reset</button>
+        <button class="btn btn-outline-light" id="close">Close project</button>
+    </header>
+
+    <div align="center">
+        <div class="red">
+            <div class="blue">
+                <div class="ext-box">
+                    <div class="int-box">
+                        <div class="frontdrop" draggable="true" ondragstart="drag(event, 'a')">
+                            <button class="btn btn-outline-light" id="actor">
+                                <img class="robEl" src="img/actorN.png"/>
+                            </button>
+                            <div class="btnDescr">Actor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blue">
+                <div class="ext-box">
+                    <div class="int-box">
+                        <div class="frontdrop" draggable="true" ondragstart="drag(event, 'b')">
+                            <button class="btn btn-outline-light" id="boundary">
+                                <img draggable="true" class="robEl" src="img/boundaryN.png"/>
+                            </button>
+                            <div class="btnDescr">Boundary</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blue">
+                <div class="ext-box">
+                    <div class="int-box">
+                        <div class="frontdrop" draggable="true" ondragstart="drag(event, 'e')">
+                            <button class="btn btn-outline-light" id="entity">
+                                <img class="robEl" src="img/entityN.png"/>
+                            </button>
+                            <div class="btnDescr">Entity</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blue">
+                <div class="ext-box">
+                    <div class="int-box">
+                        <div class="frontdrop" draggable="true" ondragstart="drag(event, 'c')">
+                            <button class="btn btn-outline-light" id="control">
+                                <img class="robEl" src="img/controlN.png"/>
+                            </button>
+                            <div class="btnDescr">Control</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="drawingArea">
+        <div id="canvasContainer">
+            <div id="canvas" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        </div>
+    </div>
+
+    <div id="entityDescription">
+        <button class="btn btn-secondary" id="openDescription">Open</button>
+        <form id="titleEntity">
+            <h3 class="sameline">Details about </h3>
+            <h3 id="selectionName" class="sameline"></h3>
+            <input type="hidden" value="" id="idEntity">
+        </form>
+        <div align="center">
+            <div id="details">
+                <label class="label">Name:</label>
+                <input type="text" id="entity-label" maxlength="14"> <!-- to avoid label overflow in box -->
+                <label class="label" id="entity-package-label">Package:</label>
+                <input type="text" id="entity-package" maxlength="30">
+            </div>
+            <div id="manageBtn">
+                <input class="btn btn-outline-secondary" id="saveEntityEditor" type="button" value="Save details">
+                <input class="btn btn-outline-secondary" id="saveControlEditor" type="button" value="Save details">
+                <input class="btn btn-outline-secondary" id="closeEditor" type="button" value="Close details">
+            </div>
+            <div>
+                <input class="sameline btn" id="saveInfo" type="button" value="">
+            </div>
+            <div>
+                <button class="btn btn-secondary" id="plusEntity">Add new attribute</button>
+            </div>
+            <div>
+                <button class="btn btn-secondary" id="plusControl">Add new control</button>
+            </div>
+
+        </div>
+        <div id="dfContainer" data-spy="scroll" data-offset="70">
+            <div id="newDf">
+                <form id="dataField"></form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="overlay" id="name-label-window">
+        <div class="window-label-content">
+            <h2>Insert text below</h2>
+            <div>
+                <input type="text" name="name-label" id="name-label"
+                       class="form-control" maxlength="20" required>
+                <button class="btn btn-outline-secondary" id="save-label">Save</button>
+                <button class="btn btn-outline-secondary" id="del-label">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="error-msg"></div>
+</main>
+</body>
+</html>

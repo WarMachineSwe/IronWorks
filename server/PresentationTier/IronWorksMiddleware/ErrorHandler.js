@@ -1,24 +1,44 @@
-var express = require('express')
-var router = express.Router()
-
+/**
+ * Handles errors
+ */
 function ErrorHandler () {
-  this.handler = function (err, req, res, next) {
-    // set locals, only providing error in development
-    res.locals.message = err.message
-    res.locals.error = req.app.get('env') === 'development' ? err : {}
 
-    // render the error page
-    res.status(err.status || 500)
-    res.render('error')
+  /**
+   * Handles request
+   * @param req client request
+   * @param res server response
+   * @param next {func} what to to next
+   */
+  this.handler = function (req, res, next) {
+    res.status(500) // mark as 500
+
+    // respond with html page
+    if (req.accepts('html')) {
+      res.render('error', {url: req.url})
+      return
+    }
+
+    // respond with json
+    if (req.accepts('json')) {
+      res.send({error: 'Cannot GET'})
+      return
+    }
+
+    res.type('txt').send('Cannot GET') // default to plain-text
   }
 }
 
-function handler (err, req, res, next) {
-  var aux = new ErrorHandler()
-  aux.handler(err.req, res, next)
+/**
+ * Handles errors request
+ * @param req client request
+ * @param res server response
+ * @param next {func} what to to next
+ */
+function handle (req, res, next) {
+  var handler = new ErrorHandler()
+  handler.handler(req, res, next)
 }
-router.use('/', handler)
 
 module.exports = {
-  'router': router
+  'handle': handle
 }

@@ -1,20 +1,18 @@
 /*Style of homepage.html and index.html*/
-html,*{
+html, * {
     margin: 0;
     padding: 0;
-    font-family:monospace;
+    font-family: monospace;
 }
 
-body{
-    background: #000000;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to top, #434343, #000000);  /* Chrome 10-25, Safari 5.1-6 */
+body {
+    background: #000000; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to top, #434343, #000000); /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to top, #434343, #000000); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    padding:1%;
-    height: 100vh;
+    padding: 1%;
 }
 
 main {
-    margin-top: 2%;
     width: 100%;
 }
 
@@ -28,9 +26,19 @@ main {
     color: #FFF;
 }
 
+.display-4 a {
+    color: #fff;
+}
+
+#title{
+    width: 20%;
+    display: inline-block;
+}
+
 #projectManagingButton {
-    width: 100%;
-    display: block;
+    margin-top:1%;
+    width: 60%;
+    display: inline-block;
 }
 
 #get_file {
@@ -38,63 +46,68 @@ main {
 }
 
 /*Homepage*/
-#alignHomepage{
+#alignHomepage {
     text-align: center;
     height: 100vh;
 }
 
-#logo1{
+#logo1 {
     width: 120px;
 }
 
-#logo2{
-    float: left;
-    width: 100px;
-}
-
-#logo3{
-    float: right;
-    width: 60px;
-}
-
-p{
+p {
     color: #FFF;
 }
 
-.display-1{
-    padding-top:2%;
+.display-1 {
+    padding-top: 2%;
     color: #FFF;
     text-align: center;
 }
 
-/*INDEX: Drawing area composed of canvas
-and the entity, border, controller, and actor input buttons*/
-#drawingArea{
-    width:100%;
-    height: auto;
-    display: block;
-    margin-top: 3%;
+#footer {
+    bottom: 5%;
+    position: fixed;
 }
 
-#managingWindow{
-    float:left;
-    width:10%;
+.display-10 {
+    size: 20px;
+    color: #FFF;
+    text-align: center;
+}
+
+.display-10 a {
+    color: #fff;
+}
+
+/*INDEX: Drawing area composed of canvas
+and the entity, border, control, and actor input buttons*/
+#drawingArea {
+    width: 100%;
+    display: block;
+    margin-top: 1%;
+}
+
+#managingWindow {
+    float: left;
+    width: 10%;
     margin-bottom: 2%;
 }
 
-#insertButtons{
-    text-align:center;
+#insertButtons {
+    text-align: center;
 }
 
-.insBtnContainer{
-    display:block;
+.insBtnContainer {
+    display: block;
     width: 90%;
+    margin-top: 20%;
     margin-bottom: 10%;
 }
 
-.robEl{
+.robEl {
     display: block;
-    width:4em;
+    width: 4em;
     height: 40px;
     border: none;
     margin: 0;
@@ -106,53 +119,39 @@ button:hover .robEl {
     filter: invert(1);
 }
 
-.btnDescr{
-    display: inline-block;
+.btnDescr {
     margin-top: 1%;
     padding-bottom: 0.3%;
     border-bottom: 0.2px solid white;
     width: 6em;
     cursor: default;
-    color:white;
+    color: white;
+    text-align: center;
 }
-
-/*.tBox{
-    display: block;
-    margin-top:4%;
-    width: 100%;
-} */
 
 .input-group {
     margin-top: 6%;
 }
 
-#canvasContainer{
-    width:80%;
-    height: auto;
+#canvasContainer {
+    margin-left: 1%;
+    width: 98%;
     display: inline-block;
 }
 
-#canvas{
+#canvas {
     width: 100%;
-    height:43em;
+    height: 52em;
     border-radius: 2px;
-    overflow:hidden;
+    overflow: hidden;
     display: block;
 }
 
-/*Makes some elements, that are not responsive, responsive*/
-@media only screen and (max-height:1366px){
-
-    body{
-        height: 100%;
-    }
-    #canvas{
-        height: 36em;
-        width: 110%;
-    }
-}
-
 @media only screen and (max-width: 870px) {
+    #title {
+        display: none;
+    }
+
     header {
         text-align: center;
     }
@@ -198,6 +197,12 @@ button:hover .robEl {
     }
 }
 
+@media only screen and (min-width: 1200px) {
+    #closeEditor {
+        margin-right: 1.3%
+    }
+}
+
 @media only screen and (min-width: 1806px) {
     .btnDescr {
         display: block;
@@ -206,7 +211,7 @@ button:hover .robEl {
 }
 
 /*Element created by javascript*/
-#middle{
+#middle {
 
     width: 76%;
     min-height: 16em;
@@ -214,7 +219,8 @@ button:hover .robEl {
     margin-left: 20%;
     padding-left: 2%;
 }
-#middle h1{
+
+#middle h1 {
     color: #ffffff;
     text-align: center;
     padding-top: 0.3em;
@@ -222,7 +228,7 @@ button:hover .robEl {
     font-size: 2.5em;
 }
 
-#erroreimg{
+#erroreimg {
     float: right;
     width: 20%;
     height: 20%;
@@ -230,17 +236,18 @@ button:hover .robEl {
     display: block;
 
 }
-#middle p{
+
+#middle p {
     color: #ffffff;
     font-size: 1.5em;
     line-height: 1.3em;
 }
 
 .devs-RobustnessModel {
-    position:absolute;
+    position: absolute;
     pointer-events: none;
     -webkit-user-select: none;
-    /* Delimita il bind tra gli oggetti in javascript*/
+    /* bind between js objects */
     box-sizing: border-box;
     z-index: 2;
 }
@@ -259,8 +266,8 @@ button:hover .robEl {
     height: 15px;
     line-height: 15px;
     text-align: center;
-    position:relative;
-    top:-4%;
+    position: relative;
+    top: -4%;
     left: -2%;
     padding: 0;
     margin: 0;
@@ -284,10 +291,10 @@ button:hover .robEl {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
-#window-label-content{
+.window-label-content {
     margin: 10% auto;
     height: 25%;
     width: 35%;
@@ -300,41 +307,40 @@ button:hover .robEl {
     z-index: 2;
 }
 
-#window-label-content .form-control {
+.window-label-content .form-control {
     margin: 5% auto;
     width: 80%;
 }
 
-#error-msg-content{
+#error-msg-content {
     margin: 10% auto;
-    height: 20%;
+    height: 30%;
     width: 25%;
     overflow-y: auto;
     background: #ffffff;
     border: 2px solid #5a6268;
     border-radius: 25px;
     text-align: center;
-    padding: auto;
+    padding: 2em;
     z-index: 2;
 }
 
-#error-text{
+#error-text {
     color: #000000;
 }
 
-
 /*Form datafield*/
-#descrizioneEntity{
+#entityDescription {
     display: none;
     margin: 40px auto;
     width: 100%;
-    height: 20em;
     background-color: #b9bbbe;
     border: 2px solid #000000;
     border-radius: 5px;
+    height: 35em;
 }
 
-#titleEntity{
+#titleEntity {
     width: 100%;
     margin: 0;
     background: -webkit-linear-gradient(to bottom, #434343, #b9bbbe);
@@ -343,60 +349,195 @@ button:hover .robEl {
     border-radius: 5px 5px 0 0;
 }
 
-#titleEntity >select,
-#titleEntity > input{
+#titleEntity > select,
+#titleEntity > input {
     margin-top: 1.8em;
 }
 
-#titleEntity > label{
+#titleEntity > label {
     margin: 1.8em 0 30px;
 }
 
-#btnDF{
-    margin: 1em 1em 0 1em;
+.sameline {
+    display: inline;
+    margin: 0;
+    padding: 0;
 }
 
+#dfContainer {
+    width: 85%;
+    margin-top: 1%;
+    margin-bottom: 5%;
+    margin-left: 10%;
+    position: relative;
+    border: 0.5px solid black;
+    border-radius: 5px;
+    z-index: 0;
+}
 
-#dataField{
+#newDf {
     width: 100%;
-    padding: 6px 5%;
+    height: auto;
+    max-height: 15em;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
-#nuovoDF{
-    width: 100%;
-    height:3em;
-    padding: 20px;
+#details{
+    margin-top:1%;
+}
+#manageBtn{
+    margin-top:2%;
+    text-align: center;
 }
 
-.data-content{
-    padding: 0 0 7px 0;
+.data-content {
+    margin: 2% 2% 2% 2%;
 }
 
-#salvaDF{
-    background-color: #008900;
+.buttonDF {
+    text-align: center;
+}
+
+#saveEntityEditor, #saveControlEditor {
     color: #000000;
     margin-bottom: 10px;
 }
 
-#annullaDF{
-    background-color: #890000;
+#closeEditor {
     color: #000000;
     margin-bottom: 10px;
+    margin-right: 1.2%
 }
 
-#salvaDF:hover{
-    background-color: #00ff00;
+#saveEntityEditor:hover, #saveControlEditor:hover {
+    background-color: #15d615;
 }
 
-#annullaDF:hover{
-    background-color: #ff1100;
+#closeEditor:hover {
+    background-color: #d11d10;
 }
 
-.label{
+.label {
     margin-left: 1em;
     font-size: 12pt;
 }
 
-.form-control{
-    width: 15%;
+.form-control {
+    width: 25%;
+}
+
+/* 2-states button */
+.twoStatesBtn {
+    outline: 0;
+    display: inline-block;
+    background-color: #d11d10;
+    color: #fff;
+    border-radius: 3px;
+    margin: 6px;
+    border-color: #6c757d;
+}
+
+.twoStatesBtn:hover {
+    background-color: #15d615;
+}
+
+.twoStatesBtn.active {
+    background-color: #15d615;
+    color: #000;
+}
+
+.twoStatesBtn.active:hover {
+    background-color: #d11d10;
+}
+
+.parent-center {
+    text-align: center;
+    width: 95%;
+}
+
+.center {
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.removalButton:hover {
+    background-color: #d11d10;
+}
+
+#name-label {
+    border-radius: 3px;
+    border-color: #6c757d;
+}
+
+.subtitle {
+    color: white
+}
+
+#saveInfo {
+    padding: 1em;
+    margin-bottom: 1em;
+    visibility: hidden;
+}
+
+#entity-package {
+    display: none;
+    width: 400px;
+}
+
+#log {
+    margin-top: 2em;
+}
+
+header input, header button {
+    margin-bottom: 10px;
+}
+
+.red, .blue {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.red {
+    overflow: hidden;
+    padding: 1% 0 0 1%;
+}
+
+.blue {
+    width: 24%;
+    display: inline-block;
+    float: left;
+    margin: 0 1% 1% 0;
+}
+
+div.ext-box {
+    display: table;
+}
+
+div.int-box {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.white {
+    color: darkgrey;
+}
+
+.frontdrop {
+    cursor: pointer;
+    position: relative;
+}
+
+.frontdrop:after {
+    content: '';
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+}
+
+#openDescription {
+    display: none;
 }

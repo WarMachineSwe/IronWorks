@@ -1,6 +1,24 @@
-extends layout
+doctype html
 
-block content
-    h1= message
-    h2= error.status
-    pre #{error.stack}
+html.full
+    head
+        meta(charset='UTF-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        title IronWorks
+
+        link(rel='stylesheet', href='style.css', type='text/css')
+    body
+        header
+            img#logo(src='img/wmach.png', alt='logo')
+            h1.display-4 IronWorks
+        main
+            #middle
+                img#erroreimg(src='img/500.png', alt='immagine errore 404')
+                h1 Ooops something went wrong!!
+                p
+                    | We have trouble getting the page you're looking ... #{'\t'}
+                    a.white(href='javascript:history.go(-1)') go back in time
+                    | #{'\t'}or go #{'\t'}
+                    span(xml:lang='en')
+                        a.white(href='/') Home
+                    | !

@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="lib/css/bootstrap.min.css" type="text/css"/>
     <link rel="stylesheet" href="style.css" type="text/css">
 
-    <!--Dipendenze per joint-->
+    <!-- joint -->
     <script src="lib/js/jquery-3.3.1.min.js"></script>
     <script src="lib/js/lodash.js"></script>
     <script src="lib/js/backbone.js"></script>
@@ -29,19 +29,30 @@
     <div id="projectManagingButton">
         <a class="btn btn-outline-light" href="app.html">New project</a>
         <input class="btn btn-outline-light" type="button" id="open" value="Open project"/>
-        <input type="file" id="get_file" accept="application/json"/> <!--bottone nascosto per ragioni grafiche-->
+        <input type="file" id="get_file" accept="application/json"/> <!-- hidden -->
     </div>
 
-    <div class="overlay" id="error-msg">
-        <div id="error-msg-content">
-            <h3>Wrong file</h3>
-            <p id="error-text">You have uploaded a wrong file.</p>
-            <button class="btn btn-outline-secondary" id="error-ok"> OK</button>
-        </div>
-    </div>
+    <div class="overlay" id="error-msg"></div>
 
+    <footer id="log">
+        <p class="display-10">Version <strong id="version"></strong></p>
+    </footer>
+
+    <!-- external scripts -->
     <script src="lib/js/sha512.js"></script>
-    <script src="js/open.js"></script>
+
+    <!-- models -->
+    <script src="js/Model/db.js"></script>
+
+    <!-- errors -->
+    <script src="js/Controller/ErrorHandler.js"></script>
+
+    <!-- utils -->
+    <script src="js/Utils/validate.js"></script>
+
+    <!-- app -->
+    <script src="js/init.js"></script>
+    <script src="js/Utils/open.js"></script>
 </main>
 
 </body>

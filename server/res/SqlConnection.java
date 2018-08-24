@@ -1,8 +1,10 @@
+<SqlConnectionPackage>;
+
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-final class SqlConnection {
+public final class SqlConnection {
 	private static SqlConnection instance = new SqlConnection();
 	private Connection conn;
 
@@ -30,7 +32,7 @@ final class SqlConnection {
 
 	public void close() throws Exception {
 		try {
-			conn.close(); 
+			conn.close();
 		} catch(Exception e) {
 			throw e;
 		}

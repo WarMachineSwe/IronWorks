@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div align="center">
+    <div class="red">
+        <div class="blue">
+            <div class="ext-box">
+                <div class="int-box">
+                    <div class="frontdrop" draggable="true" ondragstart="drag(event, 'a')">
+                        <button class="btn btn-outline-light" id="actor">
+                            <img class="robEl" src="img/actorN.png"/>
+                        </button>
+                        <div class="btnDescr">Actor</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="blue">
+            <div class="ext-box">
+                <div class="int-box">
+                    <div class="frontdrop" draggable="true" ondragstart="drag(event, 'b')">
+                        <button class="btn btn-outline-light" id="boundary">
+                            <img draggable="true" class="robEl" src="img/boundaryN.png"/>
+                        </button>
+                        <div class="btnDescr">Boundary</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="blue">
+            <div class="ext-box">
+                <div class="int-box">
+                    <div class="frontdrop" draggable="true" ondragstart="drag(event, 'e')">
+                        <button class="btn btn-outline-light" id="entity">
+                            <img class="robEl" src="img/entityN.png"/>
+                        </button>
+                        <div class="btnDescr">Entity</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="blue">
+            <div class="ext-box">
+                <div class="int-box">
+                    <div class="frontdrop" draggable="true" ondragstart="drag(event, 'c')">
+                        <button class="btn btn-outline-light" id="control">
+                            <img class="robEl" src="img/controlN.png"/>
+                        </button>
+                        <div class="btnDescr">Control</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="drawingArea">
+    <div id="canvasContainer">
+        <div id="canvas" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -18,7 +18,7 @@ function ServerResponse (raw) {
    * @returns {boolean} true iff not a server error
    */
   this.isGood = function () {
-    return this.raw.status < 500
+    return this.raw.status <500
   }
 
   /**
@@ -47,8 +47,8 @@ function ServerResponse (raw) {
    * Creates a possible filename for the download of data
    * @returns {string} filename for the download of data
    */
-  this.getFilename = function () {
-    return 'code-' + Date.now() + '.tar'
+  this.getFilename = function (extension) {
+    return 'code-' + Date.now() + '.' + extension
   }
 
   /**
@@ -61,14 +61,14 @@ function ServerResponse (raw) {
 
   /**
    * Gets error of response
-   * @returns {string} response error (if applicable)
+   * @returns {{}} response error (if applicable)
    */
   this.getError = function () {
+    //console.log(this.raw.responseText)
     var error = JSON.parse(this.raw.responseText)
-    var code = this.getCode()
-    var timeNow = Date.now()
-    var out = '[' + timeNow.toString() + '] A ' + error['level']['name'] + ' error occurred ' + error['type']['name'] + '. '
-    out += error['message'] + ' (HTTP STATUS CODE ' + code + ')'
-    return out
+    return {
+      'title': error['title'],
+      'message': error['message']
+    }
   }
 }

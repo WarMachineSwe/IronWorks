@@ -1,0 +1,76 @@
+<!-- OperationHandler_spec -->
+<div id="entityDescription" style="display: block;">
+    <button class="btn btn-secondary" id="openDescription">Open</button>
+    <form id="titleEntity">
+        <h3 class="sameline">Details about </h3>
+        <h3 id="selectionName" class="sameline">entity</h3>
+        <input type="hidden" value="f3f87b63-93ab-46c8-9ea7-511e9ee59604" id="idEntity">
+    </form>
+    <div align="center">
+        <div id="details">
+            <label class="label">Name:</label>
+            <input type="text" id="entity-label" maxlength="14"> <!-- to avoid label overflow in box -->
+            <label class="label" id="entity-package-label" style="">Package:</label>
+            <input type="text" id="entity-package" maxlength="30" style="display: inline-block;">
+        </div>
+        <div id="manageBtn">
+            <input class="btn btn-outline-secondary" id="saveEntityEditor" type="button" value="Save details" style="">
+            <input class="btn btn-outline-secondary" id="saveControlEditor" type="button" value="Save details" style="display: none;">
+            <input class="btn btn-outline-secondary" id="closeEditor" type="button" value="Close details">
+        </div>
+        <div>
+            <input class="sameline btn" id="saveInfo" type="button" value="">
+        </div>
+        <div>
+            <button class="btn btn-secondary" id="plusEntity" style="">Add new attribute</button>
+        </div>
+        <div>
+            <button class="btn btn-secondary" id="plusControl" style="display: none;">Add new control</button>
+        </div>
+
+    </div>
+    <div id="dfContainer" data-spy="scroll" data-offset="70">
+        <div id="newDf">
+            <form id="dataField">
+                <div id="0e1d4627-ce76-602f-4658-43a8866d5e74" class="data-content form-group form-inline parent-center">
+                    <button class="btn btn-secondary removalButton" id="removeButtonDf0e1d4627-ce76-602f-4658-43a8866d5e74" type="button">Remove attribute</button>
+                    <label class="label center">Type:</label>
+                    <select class="form-control center" id="typeDf0e1d4627-ce76-602f-4658-43a8866d5e74">
+                        <option>INT</option>
+                        <option>DOUBLE</option>
+                        <option>CHAR</option>
+                        <option>STRING</option>
+                        <option>BOOL</option>
+                        <option>SHORT</option>
+                        <option>BYTE</option>
+                        <option>LONG</option>
+                        <option>FLOAT</option>
+                        <option>DECIMAL</option>
+                        <option>DATE</option>
+                    </select>
+                    <label id="textNameDf0e1d4627-ce76-602f-4658-43a8866d5e74" class="label center"> Name:</label>
+                    <input id="nameDf0e1d4627-ce76-602f-4658-43a8866d5e74" class="form-control center" type="text" maxlength="30">
+                    <button class="btn twoStatesBtn center active" id="primaryKeyButtonDf0e1d4627-ce76-602f-4658-43a8866d5e74" type="button">Primary key</button>
+                    <button class="btn twoStatesBtn center active" id="notNullButtonDf0e1d4627-ce76-602f-4658-43a8866d5e74" type="button">NOT NULL</button></div>
+                <div id="3d9fd2b8-1a2a-0b66-45bd-39bacea22c8b" class="data-content form-group form-inline parent-center">
+                    <button class="btn btn-secondary removalButton" id="removeButtonDf3d9fd2b8-1a2a-0b66-45bd-39bacea22c8b" type="button">Remove attribute</button>
+                    <label class="label center">Type:</label>
+                    <select class="form-control center" id="typeDf3d9fd2b8-1a2a-0b66-45bd-39bacea22c8b">
+                        <option>INT</option>
+                        <option>DOUBLE</option>
+                        <option>CHAR</option>
+                        <option>STRING</option>
+                        <option>BOOL</option>
+                        <option>SHORT</option>
+                        <option>BYTE</option>
+                        <option>LONG</option>
+                        <option>FLOAT</option>
+                        <option>DECIMAL</option>
+                        <option>DATE</option></select>
+                    <label id="textNameDf3d9fd2b8-1a2a-0b66-45bd-39bacea22c8b" class="label center"> Name:</label>
+                    <input id="nameDf3d9fd2b8-1a2a-0b66-45bd-39bacea22c8b" class="form-control center" type="text" maxlength="30">
+                    <button class="btn twoStatesBtn center" id="primaryKeyButtonDf3d9fd2b8-1a2a-0b66-45bd-39bacea22c8b" type="button">Primary key</button>
+                    <button class="btn twoStatesBtn center" id="notNullButtonDf3d9fd2b8-1a2a-0b66-45bd-39bacea22c8b" type="button">NOT NULL</button></div></form>
+        </div>
+    </div>
+</div>

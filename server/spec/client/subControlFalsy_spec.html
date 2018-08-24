@@ -1,0 +1,47 @@
+<div id="entityDescription" style="display: block;">
+    <button class="btn btn-secondary" id="openDescription">Open</button>
+    <form id="titleEntity">
+        <h3 class="sameline">Details about </h3>
+        <h3 id="selectionName" class="sameline">control</h3>
+        <input type="hidden" value="38146486-cd83-46f1-97d2-608052e66468" id="idEntity">
+    </form>
+    <div align="center">
+        <div id="details">
+            <label class="label">Name:</label>
+            <input type="text" id="entity-label" maxlength="14" value="controller"> <!-- to avoid label overflow in box -->
+            <label class="label" id="entity-package-label" style="display: none;">Package:</label>
+            <input type="text" id="entity-package" maxlength="30" style="display: none;">
+        </div>
+        <div id="manageBtn">
+            <input class="btn btn-outline-secondary" id="saveEntityEditor" type="button" value="Save details" style="display: none;">
+            <input class="btn btn-outline-secondary" id="saveControlEditor" type="button" value="Save details" style="">
+            <input class="btn btn-outline-secondary" id="closeEditor" type="button" value="Close details">
+        </div>
+        <div>
+            <input class="sameline btn" id="saveInfo" type="button" value="Successfully saved!" style="visibility: hidden; opacity: 0; background-color: rgb(0, 255, 0);">
+        </div>
+        <div>
+            <button class="btn btn-secondary" id="plusEntity" style="display: none;">Add new attribute</button>
+        </div>
+        <div>
+            <button class="btn btn-secondary" id="plusControl" style="">Add new control</button>
+        </div>
+
+    </div>
+    <div id="dfContainer" data-spy="scroll" data-offset="70">
+        <div id="newDf">
+            <form id="dataField">
+                <div id="1bb34ca5-3fb5-2f70-570e-97a2df56491a" class="data-content form-group form-inline parent-center">
+                    <button class="btn btn-secondary removalButton" id="removeButtonDf1bb34ca5-3fb5-2f70-570e-97a2df56491a" type="button">Remove control</button>
+                    <label id="textNameDf1bb34ca5-3fb5-2f70-570e-97a2df56491a" class="label center"> Name:</label>
+                    <input id="nameDf1bb34ca5-3fb5-2f70-570e-97a2df56491a" class="form-control center" type="text" maxlength="30" value="parser">
+                </div>
+                <div id="6ba01fec-4425-9753-c55c-be4b9f4844d4" class="data-content form-group form-inline parent-center">
+                    <button class="btn btn-secondary removalButton" id="removeButtonDf6ba01fec-4425-9753-c55c-be4b9f4844d4" type="button">Remove control</button>
+                    <label id="textNameDf6ba01fec-4425-9753-c55c-be4b9f4844d4" class="label center"> Name:</label>
+                    <input id="nameDf6ba01fec-4425-9753-c55c-be4b9f4844d4" class="form-control center" type="text" maxlength="30">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

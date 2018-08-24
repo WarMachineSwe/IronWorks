@@ -1,7 +1,14 @@
-var express = require('express')
-var router = express.Router()
-
+/**
+ * Handles 404 requests
+ */
 function NotFoundErrorHandler () {
+
+  /**
+   * Handles request sending appropriate responses based on request method
+   * @param req client request
+   * @param res server response
+   * @param next {func} what to to next
+   */
   this.handler = function (req, res, next) {
     res.status(404) // mark as 404
 
@@ -21,12 +28,17 @@ function NotFoundErrorHandler () {
   }
 }
 
-function handler (err, req, res, next) {
-  var aux = new NotFoundErrorHandler()
-  aux.handler(err.req, res, next)
+/**
+ * Handles 404 request
+ * @param req client request
+ * @param res server response
+ * @param next {func} what to to next
+ */
+function handle (req, res, next) {
+  var handler = new NotFoundErrorHandler()
+  handler.handler(req, res, next)
 }
-router.use('/', handler)
 
 module.exports = {
-  'router': router
+  'handle': handle
 }

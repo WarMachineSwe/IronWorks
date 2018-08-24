@@ -1,0 +1,25 @@
+instrumentation:
+  root: .
+  extensions:
+      - .js
+  default-excludes: true
+  excludes: [
+    "*coverage/**",
+    "**app.js**",
+    "**/PresentationTier/IronWorksMiddleware/**",
+    "**/PresentationTier/CodegenRoute/codeGenHandler.js",  # needs client
+    "**/PresentationTier/CodegenRoute/files.js",  # needs client
+    "**/PresentationTier/CodegenRoute/proxyGenHandler.js",  # needs client
+    "**/PresentationTier/CodegenRoute/validate.js",  # needs client
+    "**/spec/**",
+    "**/lib/**",  # libs
+    "**/src/lib/**",  # libs,
+    "**/src/**",  # client
+    "karma.conf.js",  # karma settings
+    "utils/zipper.js"  # needs client
+  ]
+  include-all-sources: true
+
+
+reporting:
+    dir: ../tests/server/coverage

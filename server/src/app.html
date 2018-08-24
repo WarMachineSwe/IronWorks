@@ -10,190 +10,185 @@
     <link rel="stylesheet" href="lib/css/joint.min.css" type="text/css">
     <link rel="stylesheet" href="lib/css/bootstrap.min.css" type="text/css"/>
     <link rel="stylesheet" href="style.css" type="text/css">
+</head>
 
-    <!--Dipendenze per joint-->
+<body>
+
+<main>
+    <header>
+        <h1 id="title" class="display-10"><a href="/">IronWorks</a></h1>
+        <input class="btn btn-outline-light" type="button" id="open" value="Open project"/>
+        <input type="file" id="get_file" accept="application/json"/> <!-- hidden -->
+        <button class="btn btn-outline-light" id="save">Export project</button>
+        <button class="btn btn-outline-light" id="generate">Generate code</button>
+        <button class="btn btn-outline-light" id="reset">Reset</button>
+        <button class="btn btn-outline-light" id="close">Close project</button>
+    </header>
+
+    <div align="center">
+        <div class="red">
+            <div class="blue">
+                <div class="ext-box">
+                    <div class="int-box">
+                        <div class="frontdrop" draggable="true" ondragstart="drag(event, 'a')">
+                            <button class="btn btn-outline-light" id="actor">
+                                <img class="robEl" src="img/actorN.png"/>
+                            </button>
+                            <div class="btnDescr">Actor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blue">
+                <div class="ext-box">
+                    <div class="int-box">
+                        <div class="frontdrop" draggable="true" ondragstart="drag(event, 'b')">
+                            <button class="btn btn-outline-light" id="boundary">
+                                <img draggable="true" class="robEl" src="img/boundaryN.png"/>
+                            </button>
+                            <div class="btnDescr">Boundary</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blue">
+                <div class="ext-box">
+                    <div class="int-box">
+                        <div class="frontdrop" draggable="true" ondragstart="drag(event, 'e')">
+                            <button class="btn btn-outline-light" id="entity">
+                                <img class="robEl" src="img/entityN.png"/>
+                            </button>
+                            <div class="btnDescr">Entity</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blue">
+                <div class="ext-box">
+                    <div class="int-box">
+                        <div class="frontdrop" draggable="true" ondragstart="drag(event, 'c')">
+                            <button class="btn btn-outline-light" id="control">
+                                <img class="robEl" src="img/controlN.png"/>
+                            </button>
+                            <div class="btnDescr">Control</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="drawingArea">
+        <div id="canvasContainer">
+            <div id="canvas" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        </div>
+    </div>
+
+    <div id="entityDescription">
+        <button class="btn btn-secondary" id="openDescription">Open</button>
+        <form id="titleEntity">
+            <h3 class="sameline">Details about </h3>
+            <h3 id="selectionName" class="sameline"></h3>
+            <input type="hidden" value="" id="idEntity">
+        </form>
+        <div align="center">
+            <div id="details">
+                <label class="label">Name:</label>
+                <input type="text" id="entity-label" maxlength="14"> <!-- to avoid label overflow in box -->
+                <label class="label" id="entity-package-label">Package:</label>
+                <input type="text" id="entity-package" maxlength="30">
+            </div>
+            <div id="manageBtn">
+                <input class="btn btn-outline-secondary" id="saveEntityEditor" type="button" value="Save details">
+                <input class="btn btn-outline-secondary" id="saveControlEditor" type="button" value="Save details">
+                <input class="btn btn-outline-secondary" id="closeEditor" type="button" value="Close details">
+            </div>
+            <div>
+                <input class="sameline btn" id="saveInfo" type="button" value="">
+            </div>
+            <div>
+                <button class="btn btn-secondary" id="plusEntity">Add new attribute</button>
+            </div>
+            <div>
+                <button class="btn btn-secondary" id="plusControl">Add new control</button>
+            </div>
+
+        </div>
+        <div id="dfContainer" data-spy="scroll" data-offset="70">
+            <div id="newDf">
+                <form id="dataField"></form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="overlay" id="name-label-window">
+        <div class="window-label-content">
+            <h2>Insert text below</h2>
+            <div>
+                <input type="text" name="name-label" id="name-label"
+                       class="form-control" maxlength="20" required>
+                <button class="btn btn-outline-secondary" id="save-label">Save</button>
+                <button class="btn btn-outline-secondary" id="del-label">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="error-msg"></div>
+
+    <!-- app data -->
+    <script src="js/data.js"></script>
+
+    <!-- joint -->
     <script src="lib/js/jquery-3.3.1.min.js"></script>
     <script src="lib/js/lodash.js"></script>
     <script src="lib/js/backbone.js"></script>
     <script src="lib/js/joint.min.js"></script>
-</head>
 
-<body>
-<header>
-
-    <img src="img/wmach.png" id="logo" alt="logo">
-    <h1 class="display-4">IronWorks</h1>
-
-</header>
-<main>
-    <div id="projectManagingButton">
-        <input class="btn btn-outline-light" type="button" id="open" value="Open project"/>
-        <input type="file" id="get_file" accept="application/json"/> <!--bottone nascosto per ragioni grafiche-->
-        <button class="btn btn-outline-light" id="save">Export project</button>
-        <button class="btn btn-outline-light" id="generate">Generate code</button>
-        <button class="btn btn-outline-light" id="reset">Reset</button>
-        <button class="btn btn-outline-light" id="close" >Close project</button>
-    </div>
-
-    <div id="drawingArea">
-        <div id="managingWindow">
-            <div id="insertButtons">
-                <div class="insBtnContainer">
-                    <button class="btn btn-outline-light" id="actor">
-                        <img class="robEl" src="img/actorN.png"/>
-                    </button>
-                    <div class="btnDescr">Actor</div>
-                    <div class="input-group input-group-sm mb-3">
-                        <input id="textField" type="text" maxlength="11" class="form-control" placeholder="Actor"
-                               aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" id="aName">set</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="insBtnContainer">
-                    <button class="btn btn-outline-light" id="boundary">
-                        <img class="robEl" src="img/boundaryN.png"/>
-                    </button>
-                    <div class="btnDescr">Boundary</div>
-                    <div class="input-group input-group-sm mb-3">
-                        <input id="textField1" type="text" maxlength="11" class="form-control" placeholder="Boundary"
-                               aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" id="bName">set</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="insBtnContainer">
-                    <button class="btn btn-outline-light" id="entity">
-                        <img class="robEl" src="img/entityN.png"/>
-                    </button>
-                    <div class="btnDescr">Entity</div>
-                    <div class="input-group input-group-sm mb-3">
-                        <input id="textField2" type="text" maxlength="11" class="form-control" placeholder="Entity"
-                               aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" id="eName">set</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="insBtnContainer">
-                    <button class="btn btn-outline-light" id="control">
-                        <img class="robEl" src="img/controlN.png"/>
-                    </button>
-                    <div class="btnDescr">Controller</div>
-                    <div class="input-group input-group-sm mb-3">
-                        <input id="textField3" type="text" maxlength="11" class="form-control" placeholder="Controller"
-                               aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" id="cName">set</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="canvasContainer">
-            <div id="canvas"></div>
-        </div>
-    </div>
-
-    <div id="descrizioneEntity">
-        <form id="titleEntity">
-            <h3>Descrizione della entity</h3>
-            <input type="hidden" value="" id="idEntity">
-            <label for="scopeEntity">Scope:</label>
-            <select id="scopeEntity">
-                <option value="private">private</option>
-                <option value="package">package</option>
-                <option value="protected">protected</option>
-                <option value="public">public</option>
-            </select>
-            <label for="nomeEntity"> Nome classe: </label>
-            <input id="nomeEntity" type="text" readonly>
-
-            <div id="buttonDF">
-                <input class="btn btn-outline-secondary" type="button" value="Save" id="salvaDF">
-                <input class="btn btn-outline-secondary" type="button" value="Close" id="annullaDF">
-            </div>
-        </form>
-
-        <div id="btnDF">
-            <button class="btn btn-primary" id="plus">Add attribute</button>
-            <button class="btn btn-primary" id="minus">Remove selected</button>
-        </div>
-
-        <div id="nuovoDF">
-            <form class="form-group" id="dataField">
-
-            </form>
-        </div>
-    </div>
-
-
-    <div class="overlay" id="window-label">
-        <div id="window-label-content">
-            <h2>Label's link</h2>
-            <form>
-                <div>
-                    <input type="text" name="name-label" placeholder="Insert name label" id="name-label"
-                           class="form-control">
-                    <input type="submit" value="Salva" name="Save" class="btn btn-outline-secondary" id="save-label">
-                    <button class="btn btn-outline-secondary" id="del-label">Close</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="overlay" id="error-msg">
-        <div id="error-msg-content">
-            <h3>Errore</h3>
-            <p id="error-text"></p>
-            <button class="btn btn-outline-secondary" id="error-ok"> OK</button>
-        </div>
-    </div>
-
-    <script src="js/Model/Paper.js"></script>
-    <script src="js/Controller/ElementHandler.js"></script>
-    <script src="js/Model/RobustnessModels/shapes.js"></script>
-    <script src="js/Model/RobustnessModels/RobustnessModel.js"></script>
-    <script src="js/View/ElementClick.js"></script>
-    <script src="lib/js/download.js"></script>
-    
+    <!-- external scripts -->
     <script src="lib/js/sha512.js"></script>
-    <script src="js/Model/server.js"></script>
-    <script src="js/Utils/utils.js"></script>
+    <script src="lib/js/download.js"></script>
+
+    <!-- models -->
     <script src="js/Model/db.js"></script>
-    <script src="js/Utils/help.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/app.js"></script>
-
-<!--
-    <script src="lib/js/download.js"></script>
-    <script src="js/Model/RobustnessModels/shapes.js"></script>
-    <script src="lib/js/sha512.js"></script>
-
     <script src="js/Model/server.js"></script>
-    <script src="js/utils.js"></script>
 
-    <script src="js/db.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/Model/Paper.js"></script>
+    <!-- errors -->
+    <script src="js/Controller/ErrorHandler.js"></script>
 
-    <script src="js/Model/Global.js"></script>
+    <!-- utils -->
+    <script src="js/Utils/open.js"></script>
+    <script src="js/Utils/validate.js"></script>
+    <script src="js/Utils/misc.js"></script>
+
+    <!-- facade for HTML elements -->
+    <script src="js/View/Button.js"></script>
+    <script src="js/View/Cell.js"></script>
+    <script src="js/View/Link.js"></script>
+
+    <!-- controls -->
     <script src="js/Model/Commands.js"></script>
-
-    <script src="js/Controller/EditorHandler.js"></script>
-    <script src="js/Controller/ElementHandler.js"></script>
     <script src="js/Controller/OperationHandler.js"></script>
 
-    <script src="js/View/EditorLoad.js"></script>
-    <script src="js/View/ElementClick.js"></script>
-    <script src="js/View/OperationClick.js"></script>
--->
+    <!-- shapes -->
+    <script src="js/Model/RobustnessModels/shapes.js"></script>
+    <script src="js/Model/RobustnessModels/links.js"></script>
+    <script src="js/Model/RobustnessModels/RobustnessModel.js"></script>
+    <script src="js/Model/Paper.js"></script>
 
+    <!-- shapes handler -->
+    <script src="js/Utils/prettify.js"></script>
+    <script src="js/Controller/ElementHandler.js"></script>
+    <script src="js/View/EditorEventsManager.js"></script>
+    <script src="js/View/DragAndDrop.js"></script>
+
+    <!-- app -->
+    <script src="js/View/EditorLoader.js"></script>
+    <script src="js/init.js"></script>
+    <script src="js/app.js"></script>
 </main>
 </body>
 </html>

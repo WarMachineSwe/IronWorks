@@ -1,380 +1,321 @@
-var sql = require('../SqlGenerator/sql.js')
+var sql = require('../SqlGenerator/utils')
 var errors = require('../../Exceptions/exception')
-const SQL_DRIVER_NAME = 'sqlConnectionDriver'
-const SQL_PREPARED_STATEMENT = 'stmt'
-const SQL_RESULT = 'resultTable'
-const JAVA_RESULT = 'result'
-const INNER_INDENTATION = '\t\t'
-const BRAKE_LINE_INNER = '\n' + INNER_INDENTATION
-const BRAKE_LINE_METHODS = '\n\n\t'
-const JAVA_IMPORTS = 'import java.sql.DriverManager;\n' +
-  'import java.sql.Connection;\n' +
-  'import java.sql.PreparedStatement;\n' +
-  'import java.sql.ResultSet;\n' +
-  'import java.sql.Date;\n'
-
-/**
- * @param raw {string} Raw JSON value
- */
-function JavaScope (raw) {
-  this.raw = raw
-
-  /**
-   * Converts obj to string representation
-   * @returns {string} The exact scope
-   */
-  this.toString = function () {
-    if (this.raw === 'public') {
-      return 'public'
-    } else if (this.raw === 'private') {
-      return 'private'
-    } else if (this.raw === 'package') {
-      return ''
-    } else if (this.raw === 'protected') {
-      return 'protected'
-    }
-
-    return ''
-  }
-}
-
-/**
- * @param raw {string} JSON-written value of type
- */
-function JavaType (raw) {
-  this.raw = raw
-
-  this.setter = function () {
-    if (this.raw === 'int') {
-      return 'setInt'
-    } else if (this.raw === 'BOOL') {
-      return 'setBoolean'
-    } else if (this.raw === 'CHAR') {
-      return 'setChar'
-    } else if (this.raw === 'SHORT') {
-      return 'setShort'
-    } else if (this.raw === 'LONG') {
-      return 'setLong'
-    } else if (this.raw === 'FLOAT') {
-      return 'setFloat'
-    } else if (this.raw === 'DOUBLE' || raw === 'DECIMAL') {
-      return 'setDouble'
-    } else if (this.raw === 'DATE') {
-      return 'setDate'
-    } else if (this.raw === 'string') {
-      return 'setString'
-    } else if (this.raw === 'BYTE') {
-      return 'setByte'
-    }
-
-    return ''
-  }
-
-  this.getter = function () {
-    if (this.raw === 'int') {
-      return 'getInt'
-    } else if (this.raw === 'BOOL') {
-      return 'getBoolean'
-    } else if (this.raw === 'CHAR') {
-      return 'getChar'
-    } else if (this.raw === 'SHORT') {
-      return 'getShort'
-    } else if (this.raw === 'LONG') {
-      return 'getLong'
-    } else if (this.raw === 'FLOAT') {
-      return 'getFloat'
-    } else if (this.raw === 'DOUBLE' || raw === 'DECIMAL') {
-      return 'getDouble'
-    } else if (this.raw === 'DATE') {
-      return 'getDate'
-    } else if (this.raw === 'string') {
-      return 'getString'
-    } else if (this.raw === 'BYTE') {
-      return 'getByte'
-    }
-
-    return ''
-  }
-
-  /**
-   * Converts obj to string representation
-   * @returns @return {string} Type of an attribute
-   */
-  this.toString = function () {
-    if (this.raw === 'INT') {
-      return 'int'
-    } else if (this.raw === 'BOOL') {
-      return 'boolean'
-    } else if (this.raw === 'CHAR') {
-      return 'char'
-    } else if (this.raw === 'SHORT') {
-      return 'short'
-    } else if (this.raw === 'LONG') {
-      return 'long'
-    } else if (this.raw === 'FLOAT') {
-      return 'float'
-    } else if (this.raw === 'DOUBLE' || raw === 'DECIMAL') {
-      return 'double'
-    } else if (this.raw === 'DATE') {
-      return 'LocalDate'
-    } else if (this.raw === 'STRING') {
-      return 'String'
-    } else if (this.raw === 'BYTE') {
-      return 'byte'
-    }
-
-    return ''
-  }
-}
-
-/**
- * Models a Java parameter of function
- * @param type type of parameter
- * @param name name of parameter
- */
-function JavaParameter (type, name) {
-  this.type = type
-  this.name = name
-
-  this.toString = function () {
-    return this.type + ' ' + this.name
-  }
-}
-
-/**
- * Model for attributes of a Java class
- * @param type {string} type of the attribute
- * @param scope {string} scope of the attribute
- * @param name {string} name of the attribute
- * @param requiredByUser {null} || {bool} true iff is required by the user
- */
-function JavaAttribute (type, scope, name, requiredByUser) {
-  this.param = new JavaParameter(type, name)
-  this.scope = scope
-  this.requiredByUser = requiredByUser
-
-  /**
-   * Converts object to string representation
-   * @returns {string} Attribute written in Java-like syntax
-   */
-  this.toString = function () {
-    var out = ''
-    if (this.scope) {
-      out += this.scope + ' '
-    }
-
-    out += this.param.toString()
-
-    out += ';'
-    return out
-  }
-}
-
-/**
- * Model for Java method signature
- * @param scope {string} Scope of method
- * @param returnType {string} Return type of method
- * @param name {string} Name of method
- * @param parameters {[] of JavaParameter} parameters of method
- * @param exception {string} name of exception thrown by method
- */
-function JavaMethodSignature (scope, returnType, name, parameters, exception) {
-  this.scope = scope
-  this.returnType = returnType
-  this.name = name
-  this.parameters = parameters
-  this.exception = exception
-
-  /**
-   * Converts object to string representation
-   * @returns {string} Signature of method written in Java-like syntax
-   */
-  this.toString = function () {
-    var out = this.scope + ' '
-    if (this.returnType.length > 0) {
-      out += this.returnType + ' '
-    }
-    out += this.name + '('
-
-    var parameterList = []
-    for (var i in this.parameters) {
-      parameterList.push(this.parameters[i].toString())
-    }
-    out += parameterList.join(', ') + ')'
-
-    if (this.exception !== null && this.exception) {
-      out += ' throws ' + this.exception
-    }
-
-    return out
-  }
-}
-
-/**
- * Model for Java method
- * @param signature {JavaMethodSignature} signature of method
- * @param body {string} body of method
- */
-function JavaMethod (signature, body) {
-  this.signature = signature
-  this.body = body
-
-  /**
-   * Converts object to string representation
-   * @returns {string} Method written in Java-like syntax
-   */
-  this.toString = function () {
-    var out = this.signature.toString() + ' {\n'
-    out += body
-
-    if (!out.endsWith('\n')) { // add new line if necessary
-      out += '\n'
-    }
-
-    out += '\t}'
-    return out
-  }
-}
+var elements = require('./elements')
+var utils = require('./utils')
 
 /**
  * Model for Java class with attributes and methods
  * @param className {string} name of class to create
- * @param classPackage {string} the package to which the file belongs
+ * @param classPackage {JavaPackage} the package to which the file belongs
  * @param scope {string} scope of the class
- * @param attributes {[] of JavaAttr} attributes of class
+ * @param attributes {JavaAttribute[]} attributes of class
+ * @param primaryKeys  {JavaAttribute[]} attributes of class that are primary keys
  */
-function JavaClass (className, classPackage, scope, attributes) {
+function JavaClass (className, classPackage, scope, attributes, primaryKeys) {
+  var self = this
   this.scope = scope
   this.package = classPackage
   this.className = className
-  this.attrs = attributes
-  if (this.attrs === null || this.attrs.length === 0) {
-    this.attrs = []
+  this.userAttrs = attributes
+  this.classAttrs = [
+    new elements.Attribute(
+      'SqlConnection', 'private final', elements.SQL_DRIVER_NAME, 'SqlConnection.getInstance();  ' + new elements.Comment('connection to SQL DB').toString()
+    ), // driver for sql connection
+    new elements.Attribute(
+      'Map<String, Object>', 'private final', elements.CACHE_NAME, 'new HashMap<String, Object>();  ' + new elements.Comment('cache').toString()
+    )  // cache
+  ]
+  this.primaryKeys = primaryKeys
+  this.cacheAttrs = []
+  this.primaryKeys.forEach(function (key) {
+    self.cacheAttrs.push(
+      new elements.Attribute(
+        new elements.Type(key.param.type).construct(), 'private', key.param.name + 'Cached', 'null'
+      )
+    )
+  })
+  this.attrs = this.userAttrs.concat(this.classAttrs) // update list of attributes
+  this.attrs = this.attrs.concat(this.cacheAttrs)
+
+  /**
+   * Checks if parameter is a primary key
+   * @param paramName name of parameter
+   * @returns {boolean} true iff parameter is primary key
+   */
+  this.isPrimaryKey = function (paramName) {
+    for (var i = 0; i < this.primaryKeys.length; i++) {
+      if (this.primaryKeys[i].param.name === paramName) {
+        return true
+      }
+    }
+
+    return false
   }
-  this.attrs.push(new JavaAttribute(
-    'SqlConnection', 'private', SQL_DRIVER_NAME, false
-  )) // driver for sql connection
-  this.primaryKey = new JavaAttribute('int', 'private', 'primaryKeyId', true) // todo set primary key
-  this.attrs.push(this.primaryKey)
+
+  /**
+   * Creates WHERE clause with primary keys
+   * @returns {string} SQL-like sentence for WHERE clause with primary keys
+   */
+  this.getSqlId = function () {
+    var ids = []
+    this.primaryKeys.forEach(function (key) {
+      ids.push(sql.getSqlAttributeName(key.param.name) + ' = ?')
+    })
+    return ids.join(' AND ')
+  }
+
+  /**
+   * Creates SET clause with user attributes
+   * @param withPrimaryKey {boolean} adds primary key params in SET clause
+   * @returns {string} SQL-like sentence for SET clause with user attributes
+   */
+  this.getSqlSet = function (withPrimaryKey) {
+    var out = ' SET '
+    var tokens = []
+    this.userAttrs.forEach(function (attr) {
+      var isKey = self.isPrimaryKey(attr.param.name)
+      if ((isKey && withPrimaryKey) || (!isKey)) {
+        tokens.push(sql.getSqlAttributeName(attr.param.name) + ' = ?')
+      }
+    })
+    return out + tokens.join(', ')
+  }
+
+  /**
+   * Creates WHERE clause with primary keys
+   * @returns {string} SQL-like sentence for WHERE clause with primary keys
+   */
+  this.getSqlSetters = function (attributes, startingAt) {
+    var out = ''
+    for (var i = 0; i < attributes.length; i++) {
+      var setter = new elements.Type(attributes[i].param.type).setter()
+      out += elements.SQL_PREPARED_STATEMENT + '.' + setter + '(' + (startingAt + i + 1) + ', ' + attributes[i].param.name + ');' + elements.BRAKE_LINE_INNER
+    }
+    return out
+  }
+
+  /**
+   * Creates getters to fetch result from SQL query
+   * @returns {string} SQL-like sentence to fetch result from SQL query
+   */
+  this.getSqlGetters = function (attributes, startingAt) {
+    var out = ''
+    for (var i = 0; i < attributes.length; i++) {
+      var type = attributes[i].param.type
+      var getter = new elements.Type(type).getter()
+      out += type + ' ' + attributes[i].param.name + 'Result = ' + elements.SQL_RESULT + '.' + getter + '(' + (startingAt + i + 1) + ');' + elements.BRAKE_LINE_INNER // get result
+    }
+    return out
+  }
+
+  /**
+   * Creates an IF condition with the values from cache
+   * @param paramEnd {string} ending of param to check
+   * @returns {string} IF condition for cached values
+   */
+  this.getCacheCheck = function (paramEnd) {
+    var cacheChecks = []
+    this.primaryKeys.forEach(function (key) {
+      cacheChecks.push(
+        'this.' + key.param.name + 'Cached.equals(' + key.param.name + paramEnd + ')'
+      )
+    })
+    var cacheIf = cacheChecks.join(' && ')
+    cacheIf = 'if (' + cacheIf + ')'
+    return cacheIf
+  }
+
+  /**
+   * Creates list of Parameter from list of Attribute
+   * @param attributes list of Attribute
+   * @param includePrimaryKeys {boolean} true iff you DON'T want any primary key in the output list
+   */
+  this.getParamsFromAttributes = function (attributes, includePrimaryKeys) {
+    var parameters = []
+    attributes.forEach(function (attr) {
+      var isKey = self.isPrimaryKey(attr.param.name)
+      if ((isKey && includePrimaryKeys) || !isKey) {
+        parameters.push(
+          new elements.Parameter(attr.param.type, attr.param.name)
+        )
+      }
+    })
+    return parameters
+  }
 
   /**
    * Creates constructor for class
-   * @returns {JavaMethod} Constructor of class
+   * @returns {Method} Constructor of class
    */
   this.getConstructor = function () {
-    var parameters = []
-    for (var i in this.attrs) {
-      parameters[i] = new JavaParameter(this.attrs[i].param.type, this.attrs[i].param.name)
-    }
-
     var lines = []
-    for (var j in this.attrs) {
-      var line = 'this.' + this.attrs[j].param.name + ' = ' + parameters[j].name + ';'
-      lines.push(line)
-    }
-    var body = INNER_INDENTATION + lines.join(BRAKE_LINE_INNER)
 
-    return new JavaMethod(
-      new JavaMethodSignature('public', '', this.className, parameters, null), body
+    this.userAttrs.forEach(function (attr) {
+      lines.push('this.' + attr.param.name + ' = ' + attr.param.name + ';')
+    })
+
+    var body = lines.join(elements.BRAKE_LINE_INNER)
+    if (lines.length === 0) {
+      body = ''
+    }
+
+    body = elements.INNER_INDENTATION + body
+    var comment = 'Creates ' + this.className + ' with specified values'
+
+    return new elements.Method(
+      new elements.MethodSignature(
+        'public', '', this.className, this.getParamsFromAttributes(this.userAttrs, true), null), body, comment
+    )
+  }
+
+  /**
+   * Creates GET method for selected attribute of Java class
+   * @param attribute {Attribute} attribute to GET
+   * @returns {Method} GET method
+   */
+  this.getGetter = function (attribute) {
+    var body = elements.INNER_INDENTATION + 'return this.' + attribute.param.name + ';'
+    var returnType = attribute.param.type
+    var comment = 'Gets ' + attribute.param.name
+    return new elements.Method(
+      new elements.MethodSignature('public', returnType, 'get' + utils.getJavaAttributeName(attribute.param.name), [], null), body, comment
+    )
+  }
+
+  /**
+   * Creates SET method for selected attribute of Java class
+   * @param attribute {Attribute} attribute to SET
+   * @returns {Method} SET method
+   */
+  this.getSetter = function (attribute) {
+    var body = elements.INNER_INDENTATION + 'this.' + attribute.param.name + ' = ' + attribute.param.name + ';'
+    var parameter = new elements.Parameter(attribute.param.type, attribute.param.name)
+    var comment = 'Sets ' + attribute.param.name
+    return new elements.Method(
+      new elements.MethodSignature('public', 'void', 'set' + utils.getJavaAttributeName(attribute.param.name), [parameter], null), body, comment
     )
   }
 
   /**
    * Creates create method for selected Java class
-   * @returns {JavaMethod} CREATE method written in SQL-like syntax
+   * @returns {Method} CREATE method written in SQL-like syntax
    */
   this.getSqlCreate = function () {
-    var body = INNER_INDENTATION + 'PreparedStatement ' + SQL_PREPARED_STATEMENT + ' = ' + SQL_DRIVER_NAME + '.getStatement("INSERT INTO '
+    var body = elements.INNER_INDENTATION + 'PreparedStatement ' + elements.SQL_PREPARED_STATEMENT + ' = ' + elements.SQL_DRIVER_NAME + '.getStatement("INSERT INTO '
     var attributesList = []
     var valuesList = []
-    for (var i in this.attrs) {
-      if (this.attrs.requiredByUser) {
-        attributesList.push(
-          sql.getSqlAttributeName(this.attrs[i].param.name)
-        )
-        valuesList.push('?')
-      }
-    }
+    this.userAttrs.forEach(function (attr) {
+      attributesList.push(
+        sql.getSqlAttributeName(attr.param.name)
+      )
+      valuesList.push('?')
+    })
     body += sql.getSqlTableName(this.className) + ' (' + attributesList.join(', ') + ') '
-    body += 'VALUES (' + valuesList.join(', ') + ')");' + BRAKE_LINE_INNER // end of sql prepared statement
+    body += 'VALUES (' + valuesList.join(', ') + ')");' + elements.BRAKE_LINE_INNER // end of sql prepared statement
 
-    for (var j in this.attrs) { // set each attribute in sql statement
-      if (this.attrs[j].requiredByUser) {
-        var setter = new JavaType(this.attrs[j].param.type).setter()
-        body += SQL_PREPARED_STATEMENT + '.' + setter + '(' + (parseInt(j) + 1).toString() + ', ' + this.attrs[j].param.name + ');' + BRAKE_LINE_INNER
-      }
-    } // todo check 1, 3
+    var inserted = 1
+    this.userAttrs.forEach(function (attr) {
+      var setter = new elements.Type(attr.param.type).setter()
+      body += elements.SQL_PREPARED_STATEMENT + '.' + setter + '(' + (inserted).toString() + ', ' + attr.param.name + ');' + elements.BRAKE_LINE_INNER
+      inserted += 1
+    })
 
-    body += SQL_PREPARED_STATEMENT + '.execute();' + BRAKE_LINE_INNER // execute sql statement
-    body += SQL_DRIVER_NAME + '.close();' // close sql driver connection
-    return new JavaMethod(
-      new JavaMethodSignature('public', 'void', 'create', [], 'Exception'), body
+    body += elements.SQL_PREPARED_STATEMENT + '.execute();' + elements.BRAKE_LINE_INNER // execute sql statement
+    body += elements.SQL_DRIVER_NAME + '.close();' // close sql driver connection
+    var comment = 'Creates table for ' + this.className + ' with default values'
+    return new elements.Method(
+      new elements.MethodSignature('public', 'void', 'create', [], 'Exception'), body, comment
     )
   }
 
   /**
    * Creates create method for selected Java class
-   * @param attribute {JavaAttribute} attribute to read
-   * @returns {JavaMethod} CREATE method written in SQL-like syntax
+   * @returns {Method} CREATE method written in SQL-like syntax
    */
-  this.getSqlRead = function (attribute) {
-    var body = INNER_INDENTATION + 'PreparedStatement ' + SQL_PREPARED_STATEMENT + ' = ' + SQL_DRIVER_NAME + '.getStatement("SELECT '
-    body += sql.getSqlAttributeName(attribute.param.name) + ' FROM ' + sql.getSqlTableName(this.className) + ' '
-    body += 'WHERE ' + sql.getSqlAttributeName(this.primaryKey.param.name) + ' = ?");' + BRAKE_LINE_INNER
+  this.getSqlRead = function () {
+    var cacheIf = elements.INNER_INDENTATION + this.getCacheCheck('') + ' {  ' + new elements.Comment('cache is valid').toString() + '\n'
+    cacheIf += elements.INNER_INDENTATION + elements.INDENT + 'return ' + elements.CACHE_NAME + ';\n'
+    cacheIf += elements.INNER_INDENTATION + '}' + elements.BRAKE_LINE_INNER
 
-    var setter = new JavaType(this.primaryKey.param.type).setter()
-    body += SQL_PREPARED_STATEMENT + '.' + setter + '(1, ' + this.primaryKey.param.name + ');' + BRAKE_LINE_INNER
+    var body = cacheIf + '\n'
 
-    body += 'ResultSet ' + SQL_RESULT + ' = ' + SQL_PREPARED_STATEMENT + '.executeQuery();' + BRAKE_LINE_INNER // execute sql statement
-    var returnType = attribute.param.type
-    var getter = new JavaType(returnType).getter()
-    body += returnType + ' ' + JAVA_RESULT + ' = ' + SQL_RESULT + '.' + getter + '(1);' + BRAKE_LINE_INNER // get result
-    body += SQL_DRIVER_NAME + '.close();' + BRAKE_LINE_INNER // close sql driver connection
-    body += 'return ' + JAVA_RESULT + ';'
+    body += elements.INNER_INDENTATION + 'PreparedStatement ' + elements.SQL_PREPARED_STATEMENT + ' = ' + elements.SQL_DRIVER_NAME
+    body += '.getStatement("SELECT * FROM ' + sql.getSqlTableName(this.className) + ' '
+    body += 'WHERE ' + this.getSqlId() + '");' + elements.BRAKE_LINE_INNER
+    body += this.getSqlSetters(this.primaryKeys, 0) + elements.BRAKE_LINE_INNER
+    body += 'ResultSet ' + elements.SQL_RESULT + ' = ' + elements.SQL_PREPARED_STATEMENT + '.executeQuery();' + elements.BRAKE_LINE_INNER // execute sql statement
+    body += this.getSqlGetters(this.userAttrs, 0)
+    body += elements.SQL_DRIVER_NAME + '.close();' + elements.BRAKE_LINE_INNER + elements.BRAKE_LINE_INNER // close sql driver connection
 
-    return new JavaMethod(
-      new JavaMethodSignature('public', returnType, 'read' + attribute.param.name, [], 'Exception'), body
+    body += new elements.Comment('insert new cached IDs').toString() + elements.BRAKE_LINE_INNER
+    this.primaryKeys.forEach(function (key) {
+      body += 'this.' + key.param.name + 'Cached = ' + key.param.name + ';' + elements.BRAKE_LINE_INNER
+    })
+    body += elements.BRAKE_LINE_INNER + new elements.Comment('insert new cached IDs').toString() + elements.BRAKE_LINE_INNER
+    this.userAttrs.forEach(function (attr) {
+      var constructor = new elements.Type(attr.param.type).construct()
+      body += elements.CACHE_NAME + '.put("' + sql.getSqlAttributeName(attr.param.name) + '", new ' + constructor + '(' + attr.param.name + 'Result));' + elements.BRAKE_LINE_INNER
+    })
+    body += 'return ' + elements.CACHE_NAME + ';'
+
+    var comment = 'Reads all columns from ' + this.className + ' table. If requested ID is cached, returns cached data'
+    return new elements.Method(
+      new elements.MethodSignature('public', 'Map', 'read', this.getParamsFromAttributes(this.primaryKeys, true), 'Exception'), body, comment
     )
   }
 
   /**
    * Creates update method for selected Java class
-   * @param attribute {JavaAttribute} attribute to update
-   * @returns {JavaMethod} UPDATE method written in SQL-like syntax
+   * @returns {Method} UPDATE method written in SQL-like syntax
    */
-  this.getSqlUpdate = function (attribute) {
-    var body = INNER_INDENTATION + 'PreparedStatement ' + SQL_PREPARED_STATEMENT + ' = ' + SQL_DRIVER_NAME + '.getStatement("UPDATE '
-    body += sql.getSqlTableName(this.className) + ' SET ' + sql.getSqlAttributeName(attribute.param.name) + ' = ? '
-    body += 'WHERE ' + sql.getSqlAttributeName(this.primaryKey.param.name) + ' = ?");' + BRAKE_LINE_INNER
+  this.getSqlUpdate = function () {
+    var params = this.getParamsFromAttributes(this.userAttrs, false)
+    var keyParams = this.getParamsFromAttributes(this.primaryKeys, true)
+    for (var i = 0; i < keyParams.length; i++) {
+      keyParams[i].name = keyParams[i].name + 'SqlId'
+    }
+    params = params.concat(keyParams)
 
-    var setter = new JavaType(attribute.param.type).setter()
-    body += SQL_PREPARED_STATEMENT + '.' + setter + '(1, ' + attribute.param.name + ');' + BRAKE_LINE_INNER
+    var cacheIf = elements.INNER_INDENTATION + this.getCacheCheck('SqlId') + ' {  ' + new elements.Comment('write CAN' +
+      ' invalidate cache').toString() + '\n'
+    this.cacheAttrs.forEach(function (attr) {
+      cacheIf += elements.INNER_INDENTATION + elements.INDENT + 'this.' + attr.param.name + ' = null;\n'
+    })
+    cacheIf += elements.INNER_INDENTATION + '}' + elements.BRAKE_LINE_INNER
 
-    setter = new JavaType(this.primaryKey.param.type).setter()
-    body += SQL_PREPARED_STATEMENT + '.' + setter + '(2, ' + this.primaryKey.param.name + ');' + BRAKE_LINE_INNER
+    var body = cacheIf + '\n'
+    body += elements.INNER_INDENTATION + 'PreparedStatement ' + elements.SQL_PREPARED_STATEMENT + ' = ' + elements.SQL_DRIVER_NAME + '.getStatement("UPDATE '
+    body += sql.getSqlTableName(this.className) + this.getSqlSet(false)
+    body += ' WHERE ' + this.getSqlId() + '");' + elements.BRAKE_LINE_INNER
 
-    body += SQL_PREPARED_STATEMENT + '.execute();' + BRAKE_LINE_INNER // execute sql statement
-    body += SQL_DRIVER_NAME + '.close();' // close sql driver connection
+    for (var k = 0; k < params.length; k++) {
+      var setter = new elements.Type(params[k].type).setter()
+      body += elements.SQL_PREPARED_STATEMENT + '.' + setter + '(' + (k + 1) + ', ' + params[k].name + ');' + elements.BRAKE_LINE_INNER
+    }
 
-    return new JavaMethod(
-      new JavaMethodSignature('public', 'void', 'update' + attribute.param.name, [], 'Exception'), body
+    body += elements.SQL_PREPARED_STATEMENT + '.execute();' + elements.BRAKE_LINE_INNER // execute sql statement
+    body += elements.SQL_DRIVER_NAME + '.close();' // close sql driver connection
+
+    var comment = 'Updates all columns of ' + this.className + ' table. Invalidates cache if necessary'
+    return new elements.Method(
+      new elements.MethodSignature('public', 'void', 'update', params, 'Exception'), body, comment
     )
   }
 
   /**
    * Creates delete method for selected Java class
-   * @returns {JavaMethod} DELETE method written in SQL-like syntax
+   * @returns {Method} DELETE method written in SQL-like syntax
    */
   this.getSqlDelete = function () {
-    var body = INNER_INDENTATION + 'PreparedStatement ' + SQL_PREPARED_STATEMENT + ' = ' + SQL_DRIVER_NAME + '.getStatement("DELETE FROM '
-    body += sql.getSqlTableName(this.className) + ' WHERE ' + sql.getSqlAttributeName(this.primaryKey.param.name) + ' = ?");' + BRAKE_LINE_INNER
-    var setter = new JavaType(this.primaryKey.param.type).setter()
-    body += SQL_PREPARED_STATEMENT + '.' + setter + '(1, ' + this.primaryKey.param.name + ');' + BRAKE_LINE_INNER
-    body += SQL_PREPARED_STATEMENT + '.execute();' + BRAKE_LINE_INNER // execute sql statement
-    body += SQL_DRIVER_NAME + '.close();' // close sql driver connection
+    var body = elements.INNER_INDENTATION + 'PreparedStatement ' + elements.SQL_PREPARED_STATEMENT + ' = ' + elements.SQL_DRIVER_NAME + '.getStatement("DELETE FROM '
+    body += sql.getSqlTableName(this.className) + ' WHERE ' + this.getSqlId() + '");' + elements.BRAKE_LINE_INNER
+    body += this.getSqlSetters(this.primaryKeys, 0)
+    body += elements.SQL_PREPARED_STATEMENT + '.execute();' + elements.BRAKE_LINE_INNER // execute sql statement
+    body += elements.SQL_DRIVER_NAME + '.close();' // close sql driver connection
+    var comment = 'Deletes from ' + this.className + ' table'
 
-    return new JavaMethod(
-      new JavaMethodSignature('public', 'void', 'delete', [], 'Exception'), body
+    return new elements.Method(
+      new elements.MethodSignature('public', 'void', 'delete', [], 'Exception'), body, comment
     )
   }
 
@@ -383,31 +324,28 @@ function JavaClass (className, classPackage, scope, attributes) {
    * @returns {string} Class written in Java-like syntax
    */
   this.toString = function () {
-    var out = '// package' + ' ' + this.package + ';\n\n'
-    out += JAVA_IMPORTS + '\n'
+    var out = this.package.toString() + '\n\n'
+    out += elements.JAVA_IMPORTS + '\n'
     out += this.scope + ' class '
     out += className + ' {'
-    for (var i in this.attrs) {
-      out += '\n\t' + this.attrs[i].toString()
+    this.attrs.forEach(function (attr) {
+      out += '\n\t' + attr.toString()
+    })
+
+    out += elements.BRAKE_LINE_METHODS + this.getConstructor().toString() // constructor
+
+    this.userAttrs.forEach(function (attr) {
+      out += elements.BRAKE_LINE_METHODS + self.getGetter(attr).toString() // get
+      out += elements.BRAKE_LINE_METHODS + self.getSetter(attr).toString() // set
+    })
+
+    if (this.userAttrs.length > 0) {
+      out += elements.BRAKE_LINE_METHODS + this.getSqlCreate().toString() // C
+      out += elements.BRAKE_LINE_METHODS + this.getSqlRead().toString()  // R
+      out += elements.BRAKE_LINE_METHODS + this.getSqlUpdate().toString()  // U
+      out += elements.BRAKE_LINE_METHODS + this.getSqlDelete().toString() // D
     }
 
-    out += BRAKE_LINE_METHODS + this.getConstructor().toString() // constructor
-    out += BRAKE_LINE_METHODS + this.getSqlCreate().toString() // SQL Create
-    if(this.attrs !== null) {
-        for (var r in this.attrs) { // SQL Read
-            if (this.attrs[r].requiredByUser) {
-                out += BRAKE_LINE_METHODS + this.getSqlRead(this.attrs[r]).toString()
-            }
-        }
-
-        for (var u in this.attrs) { // SQL Update
-            if (this.attrs[u].requiredByUser) {
-                out += BRAKE_LINE_METHODS + this.getSqlUpdate(this.attrs[u]).toString()
-            }
-        }
-    }
-
-    out += BRAKE_LINE_METHODS + this.getSqlDelete().toString() // SQL Delete
     out += '\n};'
     return out
   }
@@ -425,16 +363,7 @@ function EntityParser (rawEntity) {
    * @returns {string} class name
    */
   this.getName = function () {
-    try {
-      return this.raw['entityName']
-    } catch (error) {
-      console.log(error)
-      /* todo remove in production throw new errors.ServerError(
-        errors.ERROR_TYPE.JAVA_GENERATOR,
-        errors.ERROR_LEVEL.HIGH,
-        error.toString()
-      ) */
-    }
+    return this.raw['entityName']
   }
 
   /**
@@ -443,42 +372,44 @@ function EntityParser (rawEntity) {
    */
   this.getData = function () {
     try {
-      var classScope = new JavaScope(this.raw['entityScope']).toString()
-      var classPackage = 'pack' + this.name // todo
+      var classScope = new elements.Scope('public').toString()
+      var classPackage = new elements.Package(this.raw['package'])
       var classAttr = []
-      for (var i in this.raw['dataFields']) {
-        classAttr[i] = new JavaAttribute(
-          new JavaScope(this.raw['dataFields'][i].fieldScope).toString(),
-          new JavaType(this.raw['dataFields'][i].fieldType).toString(),
-          this.raw['dataFields'][i].fieldName,
-          true
+      var primaryKeys = []
+
+      this.raw['dataFields'].forEach(function (df) {
+        var attribute = new elements.Attribute(
+          new elements.Type(df['fieldType']).toString(),
+          new elements.Scope('private').toString(),
+          df.fieldName,
+          null
         )
-      }
-      return new JavaClass(this.name, classPackage, classScope, classAttr)
+        classAttr.push(attribute)
+        if (df['primaryK']) {
+          primaryKeys.push(attribute)
+        }
+      })
+
+      return new JavaClass(this.getName(), classPackage, classScope, classAttr, primaryKeys)
     } catch (error) {
-      console.log(error)
-      /* todo remove in production throw new errors.ServerError(
+      throw new errors.ServerError(
         errors.ERROR_TYPE.JAVA_GENERATOR,
         errors.ERROR_LEVEL.HIGH,
         error.toString()
-      ) */
+      )
     }
   }
-  this.name = this.getName()
-  this.data = this.getData()
 
   /**
    * Gets filename for optimal file containing code
    * @returns {string} Code filename
    */
   this.getFilename = function () {
-    // console.log('qui')
     return this.getName() + '.java'
   }
 }
 
 module.exports = {
-  'EntityParser': EntityParser,
-  'JavaClass': JavaClass, // todo remove in production
-  'JavaAttribute': JavaAttribute
+  'Class': JavaClass,
+  'EntityParser': EntityParser
 }

@@ -1,3 +1,7 @@
+/**
+ * Models date and time under Unix
+ * @param unixTimestampSeconds
+ */
 function UnixDateTime (unixTimestampSeconds) {
   if (unixTimestampSeconds < 0) {
     throw Error('Cannot parse negative timestamps')
@@ -8,6 +12,10 @@ function UnixDateTime (unixTimestampSeconds) {
   var utcOffsetMinutes = this.date.getTimezoneOffset()
   this.utcDate = new Date(this.unixTimestampMs + utcOffsetMinutes * 60 * 1000)
 
+  /**
+   * Parses date and time
+   * @return {{hours: number, minutes: string, seconds: string}} date and time
+   */
   this.getTime = function () {
     var hours = this.utcDate.getHours()
     var minutes = '0' + this.utcDate.getMinutes()
@@ -19,6 +27,10 @@ function UnixDateTime (unixTimestampSeconds) {
     }
   }
 
+  /**
+   * Parses date
+   * @return {{day: string, month: string, year: number}} date
+   */
   this.getDate = function () {
     var day = '0' + this.utcDate.getDate()
     var month = '0' + (parseInt(this.utcDate.getMonth()) + 1).toString()
@@ -30,6 +42,10 @@ function UnixDateTime (unixTimestampSeconds) {
     }
   }
 
+  /**
+   * Converts object to string representation
+   * @returns {string} Class written in Java-like syntax
+   */
   this.toString = function () {
     var time = this.getTime()
     var date = this.getDate()
